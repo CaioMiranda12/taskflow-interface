@@ -1,23 +1,22 @@
-"use client";
-
 import { Task } from "@/types/task";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { useRouter } from "next/navigation";
 import {
   TASK_PRIORITY_COLOR,
   TASK_PRIORITY_LABEL,
   TASK_STATUS_COLOR,
   TASK_STATUS_LABEL,
 } from "@/constants/task";
-import { useRouter } from "next/navigation";
 
 interface TaskTableProps {
   tasks: Task[];
   showAssignee?: boolean;
   onRemoveTask?: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
 }
 
-export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTableProps) {
+export function TaskTable({ tasks, showAssignee = true, onRemoveTask, onEditTask }: TaskTableProps) {
   const router = useRouter();
 
   function handleNavigateToTask(taskId: string) {
@@ -36,7 +35,7 @@ export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTabl
               {showAssignee && (
                 <th className="text-left px-6 py-3 text-slate-500 font-medium whitespace-nowrap">Responsável</th>
               )}
-              {onRemoveTask && (
+              {(onEditTask || onRemoveTask) && (
                 <th className="text-left px-6 py-3 text-slate-500 font-medium whitespace-nowrap">Ações</th>
               )}
             </tr>
@@ -76,14 +75,29 @@ export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTabl
                       {task.assignee?.name ?? "—"}
                     </td>
                   )}
-                  {onRemoveTask && (
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => onRemoveTask(task.id)}
-                        className="text-xs text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        Remover
-                      </button>
+                  {(onEditTask || onRemoveTask) && (
+                    <td
+                      className="px-6 py-4"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <div className="flex items-center gap-3">
+                        {onEditTask && (
+                          <button
+                            onClick={() => onEditTask(task)}
+                            className="text-xs text-slate-500 hover:text-slate-900 transition-colors"
+                          >
+                            Editar
+                          </button>
+                        )}
+                        {onRemoveTask && (
+                          <button
+                            onClick={() => onRemoveTask(task.id)}
+                            className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            Remover
+                          </button>
+                        )}
+                      </div>
                     </td>
                   )}
                 </tr>

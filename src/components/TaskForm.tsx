@@ -5,13 +5,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { taskSchema, TaskFormData } from "@/schemas/taskSchema";
 import { useTaskStore } from "@/stores/useTaskStore";
+import { Task } from "@/types/task";
 
 interface TaskFormProps {
   onClose: () => void;
+  taskToEdit?: Task;
 }
 
-export function TaskForm({ onClose }: TaskFormProps) {
+export function TaskForm({ onClose, taskToEdit }: TaskFormProps) {
   const addTask = useTaskStore((state) => state.addTask);
+  const updateTask = useTaskStore((state) => state.updateTask);
+
+  const isEditing = !!taskToEdit;
 
   const {
     register,
@@ -20,22 +25,30 @@ export function TaskForm({ onClose }: TaskFormProps) {
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      status: "todo",
-      priority: "medium",
+      title: taskToEdit?.title ?? "",
+      description: taskToEdit?.description ?? "",
+      status: taskToEdit?.status ?? "todo",
+      priority: taskToEdit?.priority ?? "medium",
+      dueDate: taskToEdit?.dueDate ?? "",
     },
   });
 
   function onSubmit(data: TaskFormData) {
-    addTask({
-      id: crypto.randomUUID(),
-      title: data.title,
-      description: data.description,
-      status: data.status,
-      priority: data.priority,
-      dueDate: data.dueDate,
-      createdAt: new Date().toISOString(),
-    });
-    toast.success("Tarefa criada com sucesso!");
+    if (isEditing) {
+      updateTask(taskToEdit.id, data);
+      toast.success("Tarefa atualizada com sucesso!");
+    } else {
+      addTask({
+        id: crypto.randomUUID(),
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        priority: data.priority,
+        dueDate: data.dueDate,
+        createdAt: new Date().toISOString(),
+      });
+      toast.success("Tarefa criada com sucesso!");
+    }
     onClose();
   }
 
@@ -112,7 +125,7 @@ export function TaskForm({ onClose }: TaskFormProps) {
           type="submit"
           className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
         >
-          Criar tarefa
+          {isEditing ? "Salvar alterações" : "Criar tarefa"}
         </button>
       </div>
     </form>
