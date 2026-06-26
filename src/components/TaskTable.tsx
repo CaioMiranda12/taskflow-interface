@@ -6,6 +6,7 @@ import {
   TASK_STATUS_COLOR,
   TASK_STATUS_LABEL,
 } from "@/constants/task";
+import { EmptyState } from "@/components/EmptyState";
 
 interface TaskTableProps {
   tasks: Task[];
@@ -31,41 +32,52 @@ export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTabl
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
-            <tr
-              key={task.id}
-              className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
-            >
-              <td className="px-6 py-4 text-slate-900 font-medium">{task.title}</td>
-              <td className="px-6 py-4">
-                <Badge
-                  label={TASK_STATUS_LABEL[task.status]}
-                  className={TASK_STATUS_COLOR[task.status]}
+          {tasks.length === 0 ? (
+            <tr>
+              <td colSpan={5}>
+                <EmptyState
+                  title="Nenhuma tarefa encontrada"
+                  description="Crie uma nova tarefa para começar"
                 />
               </td>
-              <td className="px-6 py-4">
-                <Badge
-                  label={TASK_PRIORITY_LABEL[task.priority]}
-                  className={TASK_PRIORITY_COLOR[task.priority]}
-                />
-              </td>
-              {showAssignee && (
-                <td className="px-6 py-4 text-slate-700">
-                  {task.assignee?.name ?? "—"}
-                </td>
-              )}
-              {onRemoveTask && (
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => onRemoveTask(task.id)}
-                    className="text-xs text-red-500 hover:text-red-700 transition-colors"
-                  >
-                    Remover
-                  </button>
-                </td>
-              )}
             </tr>
-          ))}
+          ) : (
+            tasks.map((task) => (
+              <tr
+                key={task.id}
+                className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+              >
+                <td className="px-6 py-4 text-slate-900 font-medium">{task.title}</td>
+                <td className="px-6 py-4">
+                  <Badge
+                    label={TASK_STATUS_LABEL[task.status]}
+                    className={TASK_STATUS_COLOR[task.status]}
+                  />
+                </td>
+                <td className="px-6 py-4">
+                  <Badge
+                    label={TASK_PRIORITY_LABEL[task.priority]}
+                    className={TASK_PRIORITY_COLOR[task.priority]}
+                  />
+                </td>
+                {showAssignee && (
+                  <td className="px-6 py-4 text-slate-700">
+                    {task.assignee?.name ?? "—"}
+                  </td>
+                )}
+                {onRemoveTask && (
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => onRemoveTask(task.id)}
+                      className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                    >
+                      Remover
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
