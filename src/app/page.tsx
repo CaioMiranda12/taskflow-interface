@@ -2,17 +2,10 @@
 
 import { StatCard } from "@/components/StatCard";
 import { TaskTable } from "@/components/TaskTable";
-import { useTaskStore } from "@/stores/useTaskStore";
+import { useTaskMetrics } from "@/hooks/useTaskMetrics";
 
 export default function DashboardPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-
-  const total = tasks.length;
-  const todo = tasks.filter((task) => task.status === "todo").length;
-  const inProgress = tasks.filter((task) => task.status === "in_progress").length;
-  const done = tasks.filter((task) => task.status === "done").length;
-
-  const recentTasks = tasks.slice(0, 5);
+  const { total, todo, inProgress, done, recentTasks } = useTaskMetrics();
 
   return (
     <div className="flex flex-col gap-6">
