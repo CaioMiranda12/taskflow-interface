@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { Task, TaskStatus } from "@/types/task";
-import { tasks as mockTasks } from "@/data/tasks";
 
 interface TaskStore {
   tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
   updateTask: (taskId: string, data: Partial<Task>) => void;
   updateTaskStatus: (taskId: string, status: TaskStatus) => void;
@@ -11,7 +11,11 @@ interface TaskStore {
 }
 
 export const useTaskStore = create<TaskStore>((set) => ({
-  tasks: mockTasks,
+  tasks: [],
+
+  setTasks: (tasks: Task[]) => {
+    set(() => ({ tasks }));
+  },
 
   addTask: (task: Task) => {
     set((state: TaskStore) => ({

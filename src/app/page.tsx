@@ -1,27 +1,108 @@
 "use client";
 
-import { StatCard } from "@/components/StatCard";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Modal } from "@/components/Modal";
+import { TaskForm } from "@/components/TaskForm";
 import { TaskTable } from "@/components/TaskTable";
-import { useTaskMetrics } from "@/hooks/useTaskMetrics";
+import { TaskFilter } from "@/components/TaskFilter";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { TableSkeleton } from "@/components/TableSkeleton";
+import { useTaskStore } from "@/stores/useTaskStore";
+import { useTaskFilter } from "@/hooks/useTaskFilter";
+import { useTasks } from "@/hooks/useTasks";
+import { Task } from "@/types/task";
 
-export default function DashboardPage() {
-  const { total, todo, inProgress, done, recentTasks } = useTaskMetrics();
+export default function TasksPage() {
+  const tasks = useTaskStore((state) => state.tasks);
+  const removeTask = useTaskStore((state) => state.removeTask);
+
+  const { isLoading, isError } = useTasks();
+  const { activeFilter, filteredTasks, handleFilterChange } = useTaskFilter(tasks);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [taskIdToRemove, setTaskIdToRemove] = useState<string | null>(null);
+
+  function handleOpenCreateModal() {
+    setTaskToEdit(null);
+    setIsModalOpen(true);
+  }
+
+  function handleOpenEditModal(task: Task) {
+    setTaskToEdit(task);
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setTaskToEdit(null);
+    setIsModalOpen(false);
+  }
+
+  function handleRequestRemove(taskId: string) {
+    setTaskIdToRemove(taskId);
+  }
+
+  function handleConfirmRemove() {
+    if (taskIdToRemove) {
+      removeTask(taskIdToRemove);
+      toast.error("Tarefa removida.");
+    }
+    setTaskIdToRemove(null);
+  }
+
+  function handleCancelRemove() {
+    setTaskIdToRemove(null);
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard title="Total" value={total} description="Todas as tarefas" />
-        <StatCard title="A fazer" value={todo} description="Aguardando início" />
-        <StatCard title="Em andamento" value={inProgress} description="Em execução" />
-        <StatCard title="Concluídas" value={done} description="Finalizadas" />
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-slate-900">Tarefas</h2>
+        <button
+          onClick={handleOpenCreateModal}
+          className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
+        >
+          Nova tarefa
+        </button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h3 className="text-base font-semibold text-slate-800">Tarefas recentes</h3>
-        <TaskTable tasks={recentTasks} />
-      </div>
+      <TaskFilter value={activeFilter} onChange={handleFilterChange} />
+
+      {isLoading && <TableSkeleton />}
+
+      {isError && (
+        <div className="flex items-center justify-center py-16">
+          <span className="text-sm text-slate-500">Erro ao carregar tarefas.</span>
+        </div>
+      )}
+
+      {!isLoading && !isError && (
+        <TaskTable
+          tasks={filteredTasks}
+          showAssignee
+          onRemoveTask={handleRequestRemove}
+          onEditTask={handleOpenEditModal}
+        />
+      )}
+
+      {isModalOpen && (
+        <Modal
+          title={taskToEdit ? "Editar tarefa" : "Nova tarefa"}
+          onClose={handleCloseModal}
+        >
+          <TaskForm onClose={handleCloseModal} taskToEdit={taskToEdit ?? undefined} />
+        </Modal>
+      )}
+
+      {taskIdToRemove && (
+        <ConfirmDialog
+          title="Remover tarefa"
+          description="Tem certeza que deseja remover esta tarefa? Esta ação não pode ser desfeita."
+          onConfirm={handleConfirmRemove}
+          onCancel={handleCancelRemove}
+        />
+      )}
     </div>
   );
 }
