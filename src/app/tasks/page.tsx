@@ -1,20 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Badge } from "@/components/Badge";
 import { Modal } from "@/components/Modal";
 import { TaskForm } from "@/components/TaskForm";
+import { TaskTable } from "@/components/TaskTable";
+import { TaskFilter } from "@/components/TaskFilter";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useTaskStore } from "@/stores/useTaskStore";
-import {
-  TASK_PRIORITY_COLOR,
-  TASK_PRIORITY_LABEL,
-  TASK_STATUS_COLOR,
-  TASK_STATUS_LABEL,
-} from "@/constants/task";
+import { useTaskFilter } from "@/hooks/useTaskFilter";
 
 export default function TasksPage() {
   const tasks = useTaskStore((state) => state.tasks);
+  const removeTask = useTaskStore((state) => state.removeTask);
+
+  const { activeFilter, filteredTasks, handleFilterChange } = useTaskFilter(tasks);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskIdToRemove, setTaskIdToRemove] = useState<string | null>(null);
 
   function handleOpenModal() {
     setIsModalOpen(true);
@@ -22,6 +24,21 @@ export default function TasksPage() {
 
   function handleCloseModal() {
     setIsModalOpen(false);
+  }
+
+  function handleRequestRemove(taskId: string) {
+    setTaskIdToRemove(taskId);
+  }
+
+  function handleConfirmRemove() {
+    if (taskIdToRemove) {
+      removeTask(taskIdToRemove);
+    }
+    setTaskIdToRemove(null);
+  }
+
+  function handleCancelRemove() {
+    setTaskIdToRemove(null);
   }
 
   return (
@@ -36,52 +53,27 @@ export default function TasksPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-6 py-3 text-slate-500 font-medium">Título</th>
-              <th className="text-left px-6 py-3 text-slate-500 font-medium">Status</th>
-              <th className="text-left px-6 py-3 text-slate-500 font-medium">Prioridade</th>
-              <th className="text-left px-6 py-3 text-slate-500 font-medium">Responsável</th>
-              <th className="text-left px-6 py-3 text-slate-500 font-medium">Prazo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task) => (
-              <tr
-                key={task.id}
-                className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
-              >
-                <td className="px-6 py-4 text-slate-900 font-medium">{task.title}</td>
-                <td className="px-6 py-4">
-                  <Badge
-                    label={TASK_STATUS_LABEL[task.status]}
-                    className={TASK_STATUS_COLOR[task.status]}
-                  />
-                </td>
-                <td className="px-6 py-4">
-                  <Badge
-                    label={TASK_PRIORITY_LABEL[task.priority]}
-                    className={TASK_PRIORITY_COLOR[task.priority]}
-                  />
-                </td>
-                <td className="px-6 py-4 text-slate-700">
-                  {task.assignee?.name ?? "—"}
-                </td>
-                <td className="px-6 py-4 text-slate-500">
-                  {task.dueDate ?? "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <TaskFilter value={activeFilter} onChange={handleFilterChange} />
+
+      <TaskTable
+        tasks={filteredTasks}
+        showAssignee
+        onRemoveTask={handleRequestRemove}
+      />
 
       {isModalOpen && (
         <Modal title="Nova tarefa" onClose={handleCloseModal}>
           <TaskForm onClose={handleCloseModal} />
         </Modal>
+      )}
+
+      {taskIdToRemove && (
+        <ConfirmDialog
+          title="Remover tarefa"
+          description="Tem certeza que deseja remover esta tarefa? Esta ação não pode ser desfeita."
+          onConfirm={handleConfirmRemove}
+          onCancel={handleCancelRemove}
+        />
       )}
     </div>
   );
