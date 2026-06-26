@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -28,6 +29,7 @@ export default function RootLayout({
             </main>
           </div>
         </div>
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );

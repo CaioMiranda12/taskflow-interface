@@ -8,6 +8,7 @@ import { TaskFilter } from "@/components/TaskFilter";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useTaskFilter } from "@/hooks/useTaskFilter";
+import { toast } from "sonner";
 
 export default function TasksPage() {
   const tasks = useTaskStore((state) => state.tasks);
@@ -33,6 +34,7 @@ export default function TasksPage() {
   function handleConfirmRemove() {
     if (taskIdToRemove) {
       removeTask(taskIdToRemove);
+      toast.error("Tarefa removida.");
     }
     setTaskIdToRemove(null);
   }

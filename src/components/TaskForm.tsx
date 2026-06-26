@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { taskSchema, TaskFormData } from "@/schemas/taskSchema";
 import { useTaskStore } from "@/stores/useTaskStore";
 
@@ -34,6 +35,7 @@ export function TaskForm({ onClose }: TaskFormProps) {
       dueDate: data.dueDate,
       createdAt: new Date().toISOString(),
     });
+    toast.success("Tarefa criada com sucesso!");
     onClose();
   }
 
