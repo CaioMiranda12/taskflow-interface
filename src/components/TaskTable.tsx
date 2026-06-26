@@ -10,9 +10,10 @@ import {
 interface TaskTableProps {
   tasks: Task[];
   showAssignee?: boolean;
+  onRemoveTask?: (taskId: string) => void;
 }
 
-export function TaskTable({ tasks, showAssignee = true }: TaskTableProps) {
+export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTableProps) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <table className="w-full text-sm">
@@ -23,6 +24,9 @@ export function TaskTable({ tasks, showAssignee = true }: TaskTableProps) {
             <th className="text-left px-6 py-3 text-slate-500 font-medium">Prioridade</th>
             {showAssignee && (
               <th className="text-left px-6 py-3 text-slate-500 font-medium">Responsável</th>
+            )}
+            {onRemoveTask && (
+              <th className="text-left px-6 py-3 text-slate-500 font-medium">Ações</th>
             )}
           </tr>
         </thead>
@@ -48,6 +52,16 @@ export function TaskTable({ tasks, showAssignee = true }: TaskTableProps) {
               {showAssignee && (
                 <td className="px-6 py-4 text-slate-700">
                   {task.assignee?.name ?? "—"}
+                </td>
+              )}
+              {onRemoveTask && (
+                <td className="px-6 py-4">
+                  <button
+                    onClick={() => onRemoveTask(task.id)}
+                    className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                  >
+                    Remover
+                  </button>
                 </td>
               )}
             </tr>
