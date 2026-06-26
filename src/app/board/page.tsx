@@ -1,10 +1,14 @@
+"use client";
+
 import { KanbanColumn } from "@/components/KanbanColumn";
-import { tasks } from "@/data/tasks";
+import { useTaskStore } from "@/stores/useTaskStore";
 import { TaskStatus } from "@/types/task";
 
 const BOARD_COLUMNS: TaskStatus[] = ["todo", "in_progress", "in_review", "done"];
 
 export default function BoardPage() {
+  const tasks = useTaskStore((state) => state.tasks);
+
   function getTasksByStatus(status: TaskStatus) {
     return tasks.filter((task) => task.status === status);
   }
