@@ -20,11 +20,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={geist.className}>
-        <div className="flex h-screen">
+        <div className="flex h-screen overflow-hidden">
           <Sidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <Header />
-            <main className="flex-1 overflow-y-auto bg-slate-50 p-6">
+            <main className="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-6">
               {children}
             </main>
           </div>

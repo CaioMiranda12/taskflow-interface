@@ -2,8 +2,8 @@ import { MdNotifications } from "react-icons/md";
 
 export function Header() {
   return (
-    <header className="h-16 border-b border-slate-200 flex items-center px-6 justify-between bg-white">
-      <h1 className="text-sm font-medium text-slate-500">
+    <header className="h-16 border-b border-slate-200 flex items-center px-4 md:px-6 justify-between bg-white">
+      <h1 className="text-sm font-medium text-slate-500 pl-10 md:pl-0">
         Bem-vindo ao TaskFlow
       </h1>
 
@@ -14,7 +14,7 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-slate-200" />
-          <span className="text-sm text-slate-700">Ana Silva</span>
+          <span className="hidden md:block text-sm text-slate-700">Ana Silva</span>
         </div>
       </div>
     </header>

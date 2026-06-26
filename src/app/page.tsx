@@ -1,74 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { Modal } from "@/components/Modal";
-import { TaskForm } from "@/components/TaskForm";
+import { StatCard } from "@/components/StatCard";
 import { TaskTable } from "@/components/TaskTable";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { useTaskStore } from "@/stores/useTaskStore";
+import { useTaskMetrics } from "@/hooks/useTaskMetrics";
 
-export default function TasksPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const removeTask = useTaskStore((state) => state.removeTask);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskIdToRemove, setTaskIdToRemove] = useState<string | null>(null);
-
-  function handleOpenModal() {
-    setIsModalOpen(true);
-  }
-
-  function handleCloseModal() {
-    setIsModalOpen(false);
-  }
-
-  function handleRequestRemove(taskId: string) {
-    setTaskIdToRemove(taskId);
-  }
-
-  function handleConfirmRemove() {
-    if (taskIdToRemove) {
-      removeTask(taskIdToRemove);
-    }
-    setTaskIdToRemove(null);
-  }
-
-  function handleCancelRemove() {
-    setTaskIdToRemove(null);
-  }
+export default function DashboardPage() {
+  const { total, todo, inProgress, done, recentTasks } = useTaskMetrics();
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-slate-900">Tarefas</h2>
-        <button
-          onClick={handleOpenModal}
-          className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
-        >
-          Nova tarefa
-        </button>
+      <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard title="Total" value={total} description="Todas as tarefas" />
+        <StatCard title="A fazer" value={todo} description="Aguardando início" />
+        <StatCard title="Em andamento" value={inProgress} description="Em execução" />
+        <StatCard title="Concluídas" value={done} description="Finalizadas" />
       </div>
 
-      <TaskTable
-        tasks={tasks}
-        showAssignee
-        onRemoveTask={handleRequestRemove}
-      />
-
-      {isModalOpen && (
-        <Modal title="Nova tarefa" onClose={handleCloseModal}>
-          <TaskForm onClose={handleCloseModal} />
-        </Modal>
-      )}
-
-      {taskIdToRemove && (
-        <ConfirmDialog
-          title="Remover tarefa"
-          description="Tem certeza que deseja remover esta tarefa? Esta ação não pode ser desfeita."
-          onConfirm={handleConfirmRemove}
-          onCancel={handleCancelRemove}
-        />
-      )}
+      <div className="flex flex-col gap-3">
+        <h3 className="text-base font-semibold text-slate-800">Tarefas recentes</h3>
+        <TaskTable tasks={recentTasks} />
+      </div>
     </div>
   );
 }

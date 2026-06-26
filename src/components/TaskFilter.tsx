@@ -20,12 +20,12 @@ const FILTER_OPTIONS: { label: string; value: FilterValue }[] = [
 
 export function TaskFilter({ value, onChange }: TaskFilterProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 overflow-x-auto pb-1">
       {FILTER_OPTIONS.map((option) => (
         <button
           key={option.value}
           onClick={() => onChange(option.value)}
-          className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${value === option.value
+          className={`px-3 py-1.5 text-xs rounded-lg transition-colors whitespace-nowrap ${value === option.value
               ? "bg-slate-900 text-white"
               : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
