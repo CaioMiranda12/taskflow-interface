@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { MdDashboard, MdViewKanban, MdChecklist } from "react-icons/md";
 
 const navItems = [
-  { label: "Dashboard", href: "/" },
-  { label: "Board", href: "/board" },
-  { label: "Tarefas", href: "/tasks" },
+  { label: "Dashboard", href: "/", icon: MdDashboard },
+  { label: "Board", href: "/board", icon: MdViewKanban },
+  { label: "Tarefas", href: "/tasks", icon: MdChecklist },
 ];
 
 export function Sidebar() {
@@ -17,18 +18,24 @@ export function Sidebar() {
       <span className="text-xl font-bold text-white">TaskFlow</span>
 
       <nav className="flex flex-col gap-1">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`px-4 py-2 rounded-lg text-sm transition-colors ${pathname === item.href
-                ? "bg-slate-700 text-white"
-                : "text-slate-400 hover:bg-slate-800 hover:text-white"
-              }`}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {navItems.map((navItem) => {
+          const Icon = navItem.icon;
+          const isActive = pathname === navItem.href;
+
+          return (
+            <Link
+              key={navItem.href}
+              href={navItem.href}
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-colors ${isActive
+                  ? "bg-slate-700 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                }`}
+            >
+              <Icon size={18} />
+              {navItem.label}
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
