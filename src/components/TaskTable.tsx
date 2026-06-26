@@ -1,3 +1,5 @@
+"use client";
+
 import { Task } from "@/types/task";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
@@ -7,6 +9,7 @@ import {
   TASK_STATUS_COLOR,
   TASK_STATUS_LABEL,
 } from "@/constants/task";
+import { useRouter } from "next/navigation";
 
 interface TaskTableProps {
   tasks: Task[];
@@ -15,6 +18,12 @@ interface TaskTableProps {
 }
 
 export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTableProps) {
+  const router = useRouter();
+
+  function handleNavigateToTask(taskId: string) {
+    router.push(`/tasks/${taskId}`);
+  }
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -46,7 +55,8 @@ export function TaskTable({ tasks, showAssignee = true, onRemoveTask }: TaskTabl
               tasks.map((task) => (
                 <tr
                   key={task.id}
-                  className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                  onClick={() => handleNavigateToTask(task.id)}
+                  className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   <td className="px-6 py-4 text-slate-900 font-medium whitespace-nowrap">{task.title}</td>
                   <td className="px-6 py-4">
