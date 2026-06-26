@@ -1,0 +1,55 @@
+import { Task } from "@/types/task";
+import { users } from "./users";
+
+export const tasks: Task[] = [
+  {
+    id: "t1",
+    title: "Criar tela de login",
+    description: "Implementar autenticação com email e senha",
+    status: "done",
+    priority: "high",
+    assignee: users[0],
+    createdAt: "2025-06-01",
+    dueDate: "2025-06-10",
+  },
+  {
+    id: "t2",
+    title: "Desenvolver board kanban",
+    description: "Criar visualização de tarefas em colunas",
+    status: "in_progress",
+    priority: "urgent",
+    assignee: users[1],
+    createdAt: "2025-06-05",
+    dueDate: "2025-06-20",
+  },
+  {
+    id: "t3",
+    title: "Integrar API de notificações",
+    description: "Conectar serviço de notificações em tempo real",
+    status: "todo",
+    priority: "medium",
+    assignee: users[2],
+    createdAt: "2025-06-08",
+    dueDate: "2025-06-25",
+  },
+  {
+    id: "t4",
+    title: "Revisar design do dashboard",
+    description: "Alinhar componentes com o Figma atualizado",
+    status: "in_review",
+    priority: "low",
+    assignee: users[0],
+    createdAt: "2025-06-10",
+    dueDate: "2025-06-18",
+  },
+  {
+    id: "t5",
+    title: "Escrever testes unitários",
+    description: "Cobrir funções utilitárias e hooks",
+    status: "todo",
+    priority: "medium",
+    assignee: users[1],
+    createdAt: "2025-06-12",
+    dueDate: "2025-06-30",
+  },
+];
