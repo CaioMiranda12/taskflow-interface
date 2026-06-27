@@ -118,6 +118,33 @@ O projeto está configurado para deploy na [Vercel](https://vercel.com) com banc
 
 Adicione as variáveis de ambiente `DATABASE_URL` e `JWT_SECRET` nas configurações do projeto na Vercel.
 
-## Licença
+## Testes
 
-MIT
+O projeto possui testes unitários cobrindo a lógica principal da aplicação.
+
+### Tecnologias
+
+- [Jest](https://jestjs.io/) — test runner
+- [ts-jest](https://kulshekhar.github.io/ts-jest/) — suporte a TypeScript
+- [Testing Library](https://testing-library.com/) — testes de hooks React
+
+### Cobertura
+
+| Arquivo | O que testa |
+|---|---|
+| `useTaskStore` | Todas as actions da store (add, remove, update, updateStatus) |
+| `useTaskFilter` | Lógica de filtro por status |
+| `useTaskMetrics` | Cálculo de métricas e tarefas urgentes |
+| `authSchema` | Validações de login e registro |
+| `taskSchema` | Validações do formulário de tarefas |
+| `taskService` | Chamadas HTTP (fetchTasks, createTask, updateTask, deleteTask) |
+
+### Rodar os testes
+
+```bash
+# Rodar todos os testes
+npm test
+
+# Rodar em modo watch
+npm run test:watch
+```
