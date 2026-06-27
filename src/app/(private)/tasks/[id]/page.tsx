@@ -10,6 +10,7 @@ import {
   TASK_STATUS_LABEL,
 } from "@/constants/task";
 import { MdArrowBack } from "react-icons/md";
+import { formatDate } from "@/utils/formatDate";
 
 export default function TaskDetailPage() {
   const { id } = useParams();
@@ -81,7 +82,7 @@ export default function TaskDetailPage() {
           <div className="flex flex-col gap-1">
             <span className="text-xs text-slate-400">Prazo</span>
             <span className="text-sm text-slate-700">
-              {task.dueDate ?? "—"}
+              {task.dueDate ? formatDate(task.dueDate) : "—"}
             </span>
           </div>
 

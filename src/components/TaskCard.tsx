@@ -3,6 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Task } from "@/types/task";
 import { Badge } from "@/components/Badge";
 import { TASK_PRIORITY_COLOR, TASK_PRIORITY_LABEL } from "@/constants/task";
+import { formatDate } from "@/utils/formatDate";
 
 interface TaskCardProps {
   task: Task;
@@ -55,7 +56,7 @@ export function TaskCard({ task, isDragging = false }: TaskCardProps) {
       </div>
 
       {task.dueDate && (
-        <span className="text-xs text-slate-400">Prazo: {task.dueDate}</span>
+        <span className="text-xs text-slate-400">Prazo: {formatDate(task.dueDate)}</span>
       )}
     </div>
   );
