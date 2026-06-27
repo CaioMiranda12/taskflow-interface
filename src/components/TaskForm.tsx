@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { taskSchema, TaskFormData } from "@/schemas/taskSchema";
-import { useTaskStore } from "@/stores/useTaskStore";
+import { useCreateTask } from "@/hooks/useCreateTask";
+import { useUpdateTask } from "@/hooks/useUpdateTask";
 import { Task } from "@/types/task";
 
 interface TaskFormProps {
@@ -13,10 +14,11 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ onClose, taskToEdit }: TaskFormProps) {
-  const addTask = useTaskStore((state) => state.addTask);
-  const updateTask = useTaskStore((state) => state.updateTask);
+  const { mutateAsync: createTask, isPending: isCreating } = useCreateTask();
+  const { mutateAsync: updateTask, isPending: isUpdating } = useUpdateTask();
 
   const isEditing = !!taskToEdit;
+  const isPending = isCreating || isUpdating;
 
   const {
     register,
@@ -33,20 +35,12 @@ export function TaskForm({ onClose, taskToEdit }: TaskFormProps) {
     },
   });
 
-  function onSubmit(data: TaskFormData) {
+  async function onSubmit(data: TaskFormData) {
     if (isEditing) {
-      updateTask(taskToEdit.id, data);
+      await updateTask({ taskId: taskToEdit.id, data });
       toast.success("Tarefa atualizada com sucesso!");
     } else {
-      addTask({
-        id: crypto.randomUUID(),
-        title: data.title,
-        description: data.description,
-        status: data.status,
-        priority: data.priority,
-        dueDate: data.dueDate,
-        createdAt: new Date().toISOString(),
-      });
+      await createTask(data);
       toast.success("Tarefa criada com sucesso!");
     }
     onClose();
@@ -123,9 +117,10 @@ export function TaskForm({ onClose, taskToEdit }: TaskFormProps) {
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
+          disabled={isPending}
+          className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isEditing ? "Salvar alterações" : "Criar tarefa"}
+          {isPending ? "Salvando..." : isEditing ? "Salvar alterações" : "Criar tarefa"}
         </button>
       </div>
     </form>

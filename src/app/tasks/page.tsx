@@ -1,20 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Modal } from "@/components/Modal";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskTable } from "@/components/TaskTable";
 import { TaskFilter } from "@/components/TaskFilter";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { TableSkeleton } from "@/components/TableSkeleton";
 import { useTaskStore } from "@/stores/useTaskStore";
 import { useTaskFilter } from "@/hooks/useTaskFilter";
+import { useDeleteTask } from "@/hooks/useDeleteTask";
+import { useTasks } from "@/hooks/useTasks";
 import { Task } from "@/types/task";
-import { toast } from "sonner";
 
 export default function TasksPage() {
   const tasks = useTaskStore((state) => state.tasks);
-  const removeTask = useTaskStore((state) => state.removeTask);
-
+  const { isLoading, isError } = useTasks();
+  const { mutateAsync: deleteTask, isPending: isDeleting } = useDeleteTask();
   const { activeFilter, filteredTasks, handleFilterChange } = useTaskFilter(tasks);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,9 +43,9 @@ export default function TasksPage() {
     setTaskIdToRemove(taskId);
   }
 
-  function handleConfirmRemove() {
+  async function handleConfirmRemove() {
     if (taskIdToRemove) {
-      removeTask(taskIdToRemove);
+      await deleteTask(taskIdToRemove);
       toast.error("Tarefa removida.");
     }
     setTaskIdToRemove(null);
@@ -66,12 +69,22 @@ export default function TasksPage() {
 
       <TaskFilter value={activeFilter} onChange={handleFilterChange} />
 
-      <TaskTable
-        tasks={filteredTasks}
-        showAssignee
-        onRemoveTask={handleRequestRemove}
-        onEditTask={handleOpenEditModal}
-      />
+      {isLoading && <TableSkeleton />}
+
+      {isError && (
+        <div className="flex items-center justify-center py-16">
+          <span className="text-sm text-slate-500">Erro ao carregar tarefas.</span>
+        </div>
+      )}
+
+      {!isLoading && !isError && (
+        <TaskTable
+          tasks={filteredTasks}
+          showAssignee
+          onRemoveTask={handleRequestRemove}
+          onEditTask={handleOpenEditModal}
+        />
+      )}
 
       {isModalOpen && (
         <Modal
@@ -88,6 +101,7 @@ export default function TasksPage() {
           description="Tem certeza que deseja remover esta tarefa? Esta ação não pode ser desfeita."
           onConfirm={handleConfirmRemove}
           onCancel={handleCancelRemove}
+          isLoading={isDeleting}
         />
       )}
     </div>
