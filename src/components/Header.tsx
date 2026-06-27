@@ -2,9 +2,11 @@
 
 import { MdNotifications, MdLogout } from "react-icons/md";
 import { useLogout } from "@/hooks/useLogout";
+import { useMe } from "@/hooks/useMe";
 
 export function Header() {
   const { logout } = useLogout();
+  const { user, isLoading } = useMe();
 
   return (
     <header className="h-16 border-b border-slate-200 flex items-center px-4 md:px-6 justify-between bg-white">
@@ -18,8 +20,16 @@ export function Header() {
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-slate-200" />
-          <span className="hidden md:block text-sm text-slate-700">Minha conta</span>
+          <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+            {!isLoading && user && (
+              <span className="text-xs font-medium text-slate-600">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+          <span className="hidden md:block text-sm text-slate-700">
+            {isLoading ? "Carregando..." : user?.name ?? ""}
+          </span>
         </div>
 
         <button
