@@ -1,108 +1,57 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { Modal } from "@/components/Modal";
-import { TaskForm } from "@/components/TaskForm";
+import { StatCard } from "@/components/StatCard";
 import { TaskTable } from "@/components/TaskTable";
-import { TaskFilter } from "@/components/TaskFilter";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { TableSkeleton } from "@/components/TableSkeleton";
-import { useTaskStore } from "@/stores/useTaskStore";
-import { useTaskFilter } from "@/hooks/useTaskFilter";
+import { TaskStatusChart } from "@/components/TaskStatusChart";
+import { UrgentTasksList } from "@/components/UrgentTasksList";
+import { DashboardSkeleton } from "@/components/DashboardSkeleton";
+import { useTaskMetrics } from "@/hooks/useTaskMetrics";
 import { useTasks } from "@/hooks/useTasks";
-import { Task } from "@/types/task";
 
-export default function TasksPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const removeTask = useTaskStore((state) => state.removeTask);
-
+export default function DashboardPage() {
   const { isLoading, isError } = useTasks();
-  const { activeFilter, filteredTasks, handleFilterChange } = useTaskFilter(tasks);
+  const {
+    total,
+    todo,
+    inProgress,
+    done,
+    recentTasks,
+    urgentTasks,
+    statusChartData,
+  } = useTaskMetrics();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
-  const [taskIdToRemove, setTaskIdToRemove] = useState<string | null>(null);
-
-  function handleOpenCreateModal() {
-    setTaskToEdit(null);
-    setIsModalOpen(true);
+  if (isLoading) {
+    return <DashboardSkeleton />;
   }
 
-  function handleOpenEditModal(task: Task) {
-    setTaskToEdit(task);
-    setIsModalOpen(true);
-  }
-
-  function handleCloseModal() {
-    setTaskToEdit(null);
-    setIsModalOpen(false);
-  }
-
-  function handleRequestRemove(taskId: string) {
-    setTaskIdToRemove(taskId);
-  }
-
-  function handleConfirmRemove() {
-    if (taskIdToRemove) {
-      removeTask(taskIdToRemove);
-      toast.error("Tarefa removida.");
-    }
-    setTaskIdToRemove(null);
-  }
-
-  function handleCancelRemove() {
-    setTaskIdToRemove(null);
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-sm text-slate-500">Erro ao carregar tarefas.</span>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-slate-900">Tarefas</h2>
-        <button
-          onClick={handleOpenCreateModal}
-          className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
-        >
-          Nova tarefa
-        </button>
+      <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard title="Total" value={total} description="Todas as tarefas" />
+        <StatCard title="A fazer" value={todo} description="Aguardando início" />
+        <StatCard title="Em andamento" value={inProgress} description="Em execução" />
+        <StatCard title="Concluídas" value={done} description="Finalizadas" />
       </div>
 
-      <TaskFilter value={activeFilter} onChange={handleFilterChange} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TaskStatusChart data={statusChartData} />
+        <UrgentTasksList tasks={urgentTasks} />
+      </div>
 
-      {isLoading && <TableSkeleton />}
-
-      {isError && (
-        <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-slate-500">Erro ao carregar tarefas.</span>
-        </div>
-      )}
-
-      {!isLoading && !isError && (
-        <TaskTable
-          tasks={filteredTasks}
-          showAssignee
-          onRemoveTask={handleRequestRemove}
-          onEditTask={handleOpenEditModal}
-        />
-      )}
-
-      {isModalOpen && (
-        <Modal
-          title={taskToEdit ? "Editar tarefa" : "Nova tarefa"}
-          onClose={handleCloseModal}
-        >
-          <TaskForm onClose={handleCloseModal} taskToEdit={taskToEdit ?? undefined} />
-        </Modal>
-      )}
-
-      {taskIdToRemove && (
-        <ConfirmDialog
-          title="Remover tarefa"
-          description="Tem certeza que deseja remover esta tarefa? Esta ação não pode ser desfeita."
-          onConfirm={handleConfirmRemove}
-          onCancel={handleCancelRemove}
-        />
-      )}
+      <div className="flex flex-col gap-3">
+        <h3 className="text-base font-semibold text-slate-800">Tarefas recentes</h3>
+        <TaskTable tasks={recentTasks} />
+      </div>
     </div>
   );
 }
