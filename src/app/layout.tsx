@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Sidebar } from "@/components/Sidebar";
-import { Header } from "@/components/Header";
 import { QueryProvider } from "@/contexts/QueryProvider";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -22,15 +20,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={geist.className}>
         <QueryProvider>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <Header />
-              <main className="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-6">
-                {children}
-              </main>
-            </div>
-          </div>
+          {children}
           <Toaster richColors position="bottom-right" />
         </QueryProvider>
       </body>
