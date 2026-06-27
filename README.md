@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskFlow
 
-## Getting Started
+Plataforma SaaS de gerenciamento de tarefas com board Kanban, construída com Next.js, TypeScript, Prisma e Neon PostgreSQL.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwind-css)
+![Prisma](https://img.shields.io/badge/Prisma-7.0-2D3748?style=flat-square&logo=prisma)
+
+## Sobre o projeto
+
+O TaskFlow é uma aplicação de gerenciamento de tarefas inspirada em ferramentas como Linear e Jira. Permite criar, editar, remover e organizar tarefas em um board Kanban com drag and drop, além de oferecer um dashboard com métricas e gráficos.
+
+## Funcionalidades
+
+- Autenticação com JWT (registro, login e logout)
+- Dashboard com métricas, gráfico de status e tarefas urgentes
+- Board Kanban com drag and drop entre colunas
+- Lista de tarefas com filtros por status
+- Criar, editar e remover tarefas
+- Página de detalhe da tarefa
+- Feedback visual com toasts
+- Layout responsivo para mobile
+- Proteção de rotas via middleware
+
+## Tecnologias
+
+### Frontend
+- [Next.js 15](https://nextjs.org/) — framework React com App Router
+- [TypeScript](https://www.typescriptlang.org/) — tipagem estática
+- [Tailwind CSS 4](https://tailwindcss.com/) — estilização
+- [Zustand](https://zustand-demo.pmnd.rs/) — estado global
+- [TanStack Query](https://tanstack.com/query) — cache e sincronização de dados
+- [Axios](https://axios-http.com/) — cliente HTTP
+- [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) — formulários e validação
+- [@dnd-kit](https://dndkit.com/) — drag and drop
+- [Recharts](https://recharts.org/) — gráficos
+- [Sonner](https://sonner.emilkowal.ski/) — toasts
+- [React Icons](https://react-icons.github.io/react-icons/) — ícones
+
+### Backend
+- [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) — endpoints REST
+- [Prisma 7](https://www.prisma.io/) — ORM
+- [Neon](https://neon.tech/) — PostgreSQL serverless
+- [bcrypt](https://github.com/dcodeIO/bcrypt) — hash de senhas
+- [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) — autenticação JWT
+
+## Arquitetura
+
+```
+src/
+├── app/
+│   ├── (auth)/         # Páginas públicas (login, register)
+│   ├── (private)/      # Páginas protegidas (dashboard, board, tasks)
+│   └── api/            # API Routes (auth, tasks)
+├── components/         # Componentes reutilizáveis
+├── features/           # Módulos por funcionalidade
+├── hooks/              # Custom hooks
+├── services/           # Chamadas HTTP com Axios
+├── stores/             # Estado global com Zustand
+├── schemas/            # Schemas de validação com Zod
+├── types/              # Interfaces e tipos TypeScript
+├── constants/          # Valores fixos da aplicação
+├── data/               # Dados mockados
+└── utils/              # Funções utilitárias
+```
+
+## Como rodar localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- Conta no [Neon](https://neon.tech/) para o banco de dados
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/taskflow-interface.git
+
+# Acesse a pasta
+cd taskflow-interface
+
+# Instale as dependências
+npm install
+```
+
+### Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+DATABASE_URL="sua-connection-string-do-neon"
+JWT_SECRET="sua-chave-secreta"
+```
+
+### Banco de dados
+
+```bash
+# Gere o Prisma Client
+npx prisma generate
+
+# Rode as migrations
+npx prisma migrate dev
+```
+
+### Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+O projeto está configurado para deploy na [Vercel](https://vercel.com) com banco de dados no [Neon](https://neon.tech/).
 
-## Learn More
+Adicione as variáveis de ambiente `DATABASE_URL` e `JWT_SECRET` nas configurações do projeto na Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+## Licença
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
