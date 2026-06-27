@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { loginSchema, LoginFormData } from "@/schemas/authSchema";
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -36,6 +38,7 @@ export default function LoginPage() {
       return;
     }
 
+    queryClient.clear();
     toast.success("Login realizado com sucesso!");
     router.push("/");
   }
