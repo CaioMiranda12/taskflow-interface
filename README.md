@@ -112,12 +112,6 @@ npm run dev
 
 Acesse [http://localhost:3000](http://localhost:3000).
 
-## Deploy
-
-O projeto está configurado para deploy na [Vercel](https://vercel.com) com banco de dados no [Neon](https://neon.tech/).
-
-Adicione as variáveis de ambiente `DATABASE_URL` e `JWT_SECRET` nas configurações do projeto na Vercel.
-
 ## Testes
 
 O projeto possui testes unitários cobrindo a lógica principal da aplicação.
@@ -148,3 +142,9 @@ npm test
 # Rodar em modo watch
 npm run test:watch
 ```
+
+## Deploy
+
+O projeto está configurado para deploy na [Vercel](https://vercel.com) com banco de dados no [Neon](https://neon.tech/).
+
+Adicione as variáveis de ambiente `DATABASE_URL` e `JWT_SECRET` nas configurações do projeto na Vercel.
