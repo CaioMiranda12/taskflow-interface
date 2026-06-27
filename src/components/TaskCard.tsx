@@ -8,6 +8,7 @@ import { Task } from "@/types/task";
 import { Badge } from "@/components/Badge";
 import { TASK_PRIORITY_COLOR, TASK_PRIORITY_LABEL } from "@/constants/task";
 import { formatDate } from "@/utils/formatDate";
+import Image from "next/image";
 
 interface TaskCardProps {
   task: Task;
@@ -67,10 +68,12 @@ export function TaskCard({ task, isDragging = false }: TaskCardProps) {
           />
 
           {task.assignee && (
-            <img
-              src={task.assignee.avatarUrl}
+            <Image
+              src={task.assignee.avatarUrl ?? ""}
               alt={task.assignee.name}
-              className="w-6 h-6 rounded-full"
+              width={24}
+              height={24}
+              className="rounded-full"
             />
           )}
         </div>
