@@ -35,7 +35,7 @@ jobs:
           images: ghcr.io/caiomiranda12/taskflow-interface
           tags: |
             type=raw,value=latest
-            type=sha
+            type=sha,format=long
 
       - name: Build and push
         uses: docker/build-push-action@v6
