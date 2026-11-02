@@ -1,8 +1,6 @@
 services:
   taskflow:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/caiomiranda12/taskflow-interface:latest
     container_name: taskflow
     restart: unless-stopped
     env_file:
