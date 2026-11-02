@@ -3,12 +3,13 @@ name: TaskFlow CI
 on:
   push:
     branches:
-      - main
+      - master
       - chore/security-dependencies
+      - feat/docker-publish
 
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   quality:
